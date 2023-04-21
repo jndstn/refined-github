@@ -6,7 +6,6 @@ import * as pageDetect from 'github-url-detection';
 import features from '../feature-manager';
 import {getBranches} from '../github-helpers/pr-branches';
 import getDefaultBranch from '../github-helpers/get-default-branch';
-import onPrMergePanelOpen from '../github-events/on-pr-merge-panel-open';
 import attachElement from '../helpers/attach-element';
 import cleanCommitMessage from '../helpers/clean-commit-message';
 import {userCanLikelyMergePR} from '../github-helpers';
@@ -39,6 +38,9 @@ async function init(): Promise<void | false> {
 }
 
 void features.add(import.meta.url, {
+	asLongAs: [
+		userCanLikelyMergePR,
+	],
 	include: [
 		pageDetect.isPRConversation,
 	],
@@ -46,14 +48,7 @@ void features.add(import.meta.url, {
 		// Don't clear 1-commit PRs #3140
 		() => select.all('.TimelineItem.js-commit').length === 1,
 	],
-	asLongAs: [
-		userCanLikelyMergePR,
-	],
-	additionalListeners: [
-		onPrMergePanelOpen,
-	],
-	onlyAdditionalListeners: true,
-	awaitDomReady: true, // Appears near the page anyway
+	awaitDomReady: true, // Appears near the end of the page anyway
 	init,
 });
 
